@@ -1,8 +1,8 @@
-package br.com.openbanking.project.controller;
+package br.com.openbanking.project.forms;
 
 import br.com.openbanking.project.model.Product;
 
-public class ProductForm {
+public class ProductPostForm {
 	
 	private Long id;
 	private String description;

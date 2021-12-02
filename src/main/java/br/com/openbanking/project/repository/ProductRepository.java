@@ -6,4 +6,7 @@ import br.com.openbanking.project.model.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long>{
 
+	Product getByid(Long id);
+	
+	
 }

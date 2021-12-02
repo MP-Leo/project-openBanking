@@ -7,16 +7,21 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.openbanking.project.dto.ProductDto;
+import br.com.openbanking.project.forms.ProductPostForm;
+import br.com.openbanking.project.forms.ProductUpdateForm;
 import br.com.openbanking.project.model.Product;
 import br.com.openbanking.project.repository.ProductRepository;
 
@@ -31,13 +36,14 @@ public class ProductController {
 	public ResponseEntity<ProductDto> findById(
 			@PathVariable Long id){
 		
-		Optional<Product> product = repository.findById(id);
+		Optional<Product> optional = repository.findById(id);
 		
-		if(product == null) {
-			return null;
+		if(optional.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
+					"Element Not Found");
 		}
 		
-		ProductDto dto = new ProductDto(product.get());
+		ProductDto dto = new ProductDto(optional.get());
 		
 		return ResponseEntity.ok(dto);
 		
@@ -45,7 +51,7 @@ public class ProductController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<ProductDto>> listProducts(){
+	public ResponseEntity<List<ProductDto>> list(){
 				
 		List<Product> products = repository.findAll();
 		
@@ -57,8 +63,8 @@ public class ProductController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<ProductDto> createProduct(
-			@RequestBody ProductForm form, UriComponentsBuilder uriBuilder){
+	public ResponseEntity<ProductDto> create(@RequestBody ProductPostForm form,
+			UriComponentsBuilder uriBuilder){
 		
 		Product newProduct = form.toProduct();
 		
@@ -71,5 +77,20 @@ public class ProductController {
 		
 	}
 	
-
+	@PutMapping("/{id}")
+	public ResponseEntity<ProductDto> update(@PathVariable Long id ,
+			@RequestBody ProductUpdateForm form){
+		
+		Optional<Product> optinal = repository.findById(id);
+		
+		if(optinal.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"Element not Found"); 
+		}
+				
+		Product updatedProduct = form.doUpdate(repository, id);
+		
+		return ResponseEntity.ok(new ProductDto(updatedProduct));
+		
+	}
 }
