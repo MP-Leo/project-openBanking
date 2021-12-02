@@ -78,6 +78,7 @@ public class ProductController {
 	}
 	
 	@PutMapping("/{id}")
+	@Transactional
 	public ResponseEntity<ProductDto> update(@PathVariable Long id ,
 			@RequestBody ProductUpdateForm form){
 		
