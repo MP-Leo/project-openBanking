@@ -2,10 +2,14 @@ package br.com.openbanking.project.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +27,23 @@ public class ProductController {
 	@Autowired
 	private ProductRepository repository;
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<ProductDto> findById(
+			@PathVariable Long id){
+		
+		Optional<Product> product = repository.findById(id);
+		
+		if(product == null) {
+			return null;
+		}
+		
+		ProductDto dto = new ProductDto(product.get());
+		
+		return ResponseEntity.ok(dto);
+		
+		
+	}
+	
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> listProducts(){
 				
@@ -35,6 +56,7 @@ public class ProductController {
 	}
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<ProductDto> createProduct(
 			@RequestBody ProductForm form, UriComponentsBuilder uriBuilder){
 		
@@ -48,4 +70,6 @@ public class ProductController {
 		return ResponseEntity.created(uri).body(new ProductDto(newProduct));
 		
 	}
+	
+
 }
