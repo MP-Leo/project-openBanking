@@ -1,5 +1,7 @@
 package br.com.openbanking.project.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import br.com.openbanking.project.model.Product;
@@ -13,6 +15,10 @@ public class ProductDto {
 	
 	
 	
+	// CONSTRUCTORS
+	public ProductDto() {
+		
+	}
 	
 	public ProductDto(Product product) {
 		this.id = product.getId();
@@ -20,6 +26,21 @@ public class ProductDto {
 		this.description = product.getDescription();
 		this.price = product.getPrice().doubleValue();
 	}
+	
+	
+	
+	
+	public static List<ProductDto> convertList(List<Product> products) {
+		List<ProductDto> dtos = new ArrayList<ProductDto>();
+	
+		for (Product product : products) {
+			dtos.add(new ProductDto(product));
+		}
+		
+		return dtos;
+	}
+	
+	
 	
 	// COMPARATIVE METHOD
 	@Override
@@ -44,18 +65,15 @@ public class ProductDto {
 	public Long getId() {
 		return id;
 	}
-	public String getNome() {
+	public String getName() {
 		return name;
 	}
-	public String getDescricao() {
+	public String getDescription() {
 		return description;
 	}
 	public Double getPrice() {
 		return price;
 	}
-	
-	
-	
-	
-	
+
+			
 }
