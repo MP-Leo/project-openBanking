@@ -39,8 +39,7 @@ public class ProductDto {
 		
 		return dtos;
 	}
-	
-	
+		
 	
 	// COMPARATIVE METHOD
 	@Override
