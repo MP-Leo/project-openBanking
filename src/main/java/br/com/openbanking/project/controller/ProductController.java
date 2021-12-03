@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,5 +94,25 @@ public class ProductController {
 		
 		return ResponseEntity.ok(new ProductDto(updatedProduct));
 		
+	}
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<ProductDto> delete(@PathVariable Long id){
+		
+		Optional<Product> optinal = repository.findById(id);
+		
+		if(optinal.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"Element not Found"); 
+		}
+		
+		Product deletedProduct = optinal.get();
+		
+		ProductDto dto = new ProductDto(deletedProduct);
+		
+		repository.delete(deletedProduct);
+		
+		return ResponseEntity.ok(dto);
 	}
 }
