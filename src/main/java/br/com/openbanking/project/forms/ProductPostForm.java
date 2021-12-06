@@ -1,23 +1,27 @@
 package br.com.openbanking.project.forms;
 
+import javax.validation.constraints.NotEmpty;
+
+import com.sun.istack.NotNull;
+
 import br.com.openbanking.project.model.Product;
 
 public class ProductPostForm {
 	
-	private Long id;
+	@NotEmpty @NotNull
 	private String description;
+	@NotEmpty @NotNull
 	private String name;
+	@NotNull
 	private Double price;
 	
 	public Product toProduct() {
 		
-		return new Product(this.id, this.name, this.description, this.price);
+		return new Product(this.name, this.description, this.price);
 		
 	}
 	
-	public Long getId() {
-		return id;
-	}
+
 	public String getDescription() {
 		return description;
 	}

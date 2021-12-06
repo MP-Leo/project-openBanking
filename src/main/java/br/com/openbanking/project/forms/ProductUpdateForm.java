@@ -5,6 +5,7 @@ import br.com.openbanking.project.repository.ProductRepository;
 
 public class ProductUpdateForm {
 	
+	
 	private String name;
 	private String description;
 	private Double price;
