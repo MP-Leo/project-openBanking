@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -114,5 +115,20 @@ public class ProductController {
 		repository.delete(deletedProduct);
 		
 		return ResponseEntity.ok(dto);
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<ProductDto>> search(
+			@RequestParam(required = false) Double maxPricedb,
+			@RequestParam(required = false) String max_price,
+			@RequestParam(required = false) Double minPricedb,
+			@RequestParam(required = false) String min_price,
+			@RequestParam(required = false) String q){
+		
+		List<Product> products;
+		products = repository.findUsingFilters(q, minPricedb, maxPricedb);
+		
+				
+		return ResponseEntity.ok(ProductDto.convertList(products));
 	}
 }
