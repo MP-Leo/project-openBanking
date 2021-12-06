@@ -1,15 +1,15 @@
 package br.com.openbanking.project.forms;
 
 import javax.validation.constraints.NotEmpty;
-
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
 
 import br.com.openbanking.project.model.Product;
 
 public class ProductPostForm {
 	
-	@NotEmpty @NotNull
+	@NotNull @NotEmpty
 	private String description;
+	
 	@NotEmpty @NotNull
 	private String name;
 	@NotNull
@@ -18,7 +18,7 @@ public class ProductPostForm {
 	public Product toProduct() {
 		
 		return new Product(this.name, this.description, this.price);
-		
+
 	}
 	
 

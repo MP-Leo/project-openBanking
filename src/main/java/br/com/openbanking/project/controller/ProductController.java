@@ -66,9 +66,8 @@ public class ProductController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<ProductDto> create(
-			@RequestBody @Valid ProductPostForm form,
-			UriComponentsBuilder uriBuilder){
+	public ResponseEntity<ProductDto> create(UriComponentsBuilder uriBuilder,
+			@RequestBody @Valid ProductPostForm form){
 		
 		Product newProduct = form.toProduct();
 		
