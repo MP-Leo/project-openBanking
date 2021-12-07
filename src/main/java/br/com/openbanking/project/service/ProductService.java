@@ -25,7 +25,7 @@ public class ProductService {
 		Optional<Product> optional = repository.findById(id);
 		
 		if(optional.isEmpty()) {
-			throw new EntityNotFoundException("Product with id :"
+			throw new EntityNotFoundException("Product with id: "
 					+ id + " not found"); 
 		}
 		
