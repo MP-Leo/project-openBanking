@@ -2,13 +2,11 @@ package br.com.openbanking.project.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,36 +17,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.openbanking.project.dto.ProductDto;
 import br.com.openbanking.project.forms.ProductPostForm;
 import br.com.openbanking.project.forms.ProductUpdateForm;
 import br.com.openbanking.project.model.Product;
-import br.com.openbanking.project.repository.ProductRepository;
+import br.com.openbanking.project.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 	
 	@Autowired
-	private ProductRepository repository;
+	private ProductService service;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ProductDto> findById(
-			@PathVariable Long id){
+	public ResponseEntity<ProductDto> findById( @PathVariable Long id ){
 		
-		Optional<Product> optional = repository.findById(id);
 		
-		if(optional.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
-					"Element Not Found");
-		}
+		Product product = service.findById(id);
 		
-		ProductDto dto = new ProductDto(optional.get());
-		
-		return ResponseEntity.ok(dto);
+		return ResponseEntity.ok(new ProductDto(product));
 		
 		
 	}
@@ -56,7 +46,7 @@ public class ProductController {
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> list(){
 				
-		List<Product> products = repository.findAll();
+		List<Product> products = service.findAll();
 		
 		List<ProductDto> dtos = ProductDto.convertList(products);
 		
@@ -69,9 +59,7 @@ public class ProductController {
 	public ResponseEntity<ProductDto> create(UriComponentsBuilder uriBuilder,
 			@RequestBody @Valid ProductPostForm form){
 		
-		Product newProduct = form.toProduct();
-		
-		repository.save(newProduct);
+		Product newProduct = service.save(form);
 		
 		URI uri = uriBuilder.path("/products/{id}")
 				.buildAndExpand(newProduct.getId()).toUri();
@@ -85,14 +73,8 @@ public class ProductController {
 	public ResponseEntity<ProductDto> update(@PathVariable Long id ,
 			@RequestBody ProductUpdateForm form){
 		
-		Optional<Product> optinal = repository.findById(id);
 		
-		if(optinal.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"Element not Found"); 
-		}
-				
-		Product updatedProduct = form.doUpdate(repository, id);
+		Product updatedProduct = service.update(id, form);
 		
 		return ResponseEntity.ok(new ProductDto(updatedProduct));
 		
@@ -102,20 +84,9 @@ public class ProductController {
 	@Transactional
 	public ResponseEntity<ProductDto> delete(@PathVariable Long id){
 		
-		Optional<Product> optinal = repository.findById(id);
+		Product deleted = service.delete(id);
 		
-		if(optinal.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"Element not Found"); 
-		}
-		
-		Product deletedProduct = optinal.get();
-		
-		ProductDto dto = new ProductDto(deletedProduct);
-		
-		repository.delete(deletedProduct);
-		
-		return ResponseEntity.ok(dto);
+		return ResponseEntity.ok(new ProductDto(deleted));
 	}
 	
 	@GetMapping("/search")
@@ -127,7 +98,7 @@ public class ProductController {
 			@RequestParam(required = false) String q){
 		
 		List<Product> products;
-		products = repository.findUsingFilters(q, minPricedb, maxPricedb);
+		products = service.search(maxPricedb, minPricedb, q);
 		
 				
 		return ResponseEntity.ok(ProductDto.convertList(products));

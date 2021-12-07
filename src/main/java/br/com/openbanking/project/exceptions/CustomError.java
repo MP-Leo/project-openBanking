@@ -13,8 +13,6 @@ public class CustomError {
 	        this.message = message;
 	   }
 
-
-
 	public Integer getStatus() {
 		return status;
 	}
